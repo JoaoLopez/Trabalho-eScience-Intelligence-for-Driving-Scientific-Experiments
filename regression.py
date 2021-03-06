@@ -62,44 +62,62 @@ class LinearRegression(object):
 
 ## read data & choose data
 melbourne_file_path = 'Data/20343.csv'
-melbourne_data = pd.read_csv(melbourne_file_path).loc[lambda x: x['Small Molecule Name'] == 'Abemaciclib'].loc[lambda x: x['Cell Name'] == 'HCC1806']
+melbourne_data = pd.read_csv(melbourne_file_path)
+# melbourne_data = pd.read_csv(melbourne_file_path).loc[lambda x: x['Small Molecule Name'] == 'Abemaciclib'].loc[lambda x: x['Cell Name'] == 'HCC1806']
 feature_array = melbourne_data["Small Mol Concentration (uM)"]
 label_array = melbourne_data["Increased Fraction Dead"]
+# the size of data in a same model
+size = 9
 
-## get feature matrix and label vector
+## get every feature matrix and label vector
 lr = LinearRegression()
-feature = []
-label = []
+features = []
+labels = []
+tmp_i = 0
+tmp_f = []
 for f in feature_array:
-    feature.append(f)
+    tmp_f.append(f)
+    if tmp_i % size == size - 1:
+        mat_f = np.mat(tmp_f).T
+        features.append(mat_f)
+        tmp_f = []
+    tmp_i += 1
+tmp_i = 0
+tmp_l = []
 for l in label_array:
-    label.append(l)
-feature = np.mat(feature).T
-label = np.mat(label).T
+    tmp_l.append(l)
+    if tmp_i % size == size - 1:
+        mat_l = np.mat(tmp_l).T
+        labels.append(mat_l)
+        tmp_l = []
+    tmp_i += 1
 
 ## N-fold cross-validation
 # record the real value and the predictive value
 loss = []
-# divide into n sets
-n = feature.shape[0]
-for i in range(n):
-    # test part
-    test_feature = feature[0]
-    test_label = label[0]
-    # delete the test part then remain the training part
-    feature = np.delete(feature, 0, 0)
-    label = np.delete(label, 0, 0)
+for j in range(len(features)):
+    feature = features[j]
+    label = labels[j]
+    # divide into n sets
+    n = feature.shape[0]
+    for i in range(n):
+        # test part
+        test_feature = feature[0]
+        test_label = label[0]
+        # delete the test part then remain the training part
+        feature = np.delete(feature, 0, 0)
+        label = np.delete(label, 0, 0)
 
-    # train & predict
-    # lr.regress(feature, label)
-    lr.regress(feature, label, 'GD')
-    predict_label = lr.predict(test_feature)
-    loss.append((np.array(test_label)[0][0],np.array(predict_label)[0][0]))
+        # train & predict
+        lr.regress(feature, label)
+        # lr.regress(feature, label, 'GD')
+        predict_label = lr.predict(test_feature)
+        loss.append((np.array(test_label)[0][0],np.array(predict_label)[0][0]))
 
-    # restore
-    lr.clear()
-    feature = np.append(feature, test_feature, 0)
-    label = np.append(label, test_label, 0)
+        # restore
+        lr.clear()
+        feature = np.append(feature, test_feature, 0)
+        label = np.append(label, test_label, 0)
 
 # calculation for Receiver-Operating Characteristic curve
 roc_x = []
@@ -107,7 +125,7 @@ roc_y = []
 roc_y_random = []
 for ii in range(1000):
     # Allowable error range
-    i = 2.0 / 1000 * ii
+    i = 1.0 / 1000 * ii
     # hit rate count
     hit_cnt = 0
     hit_cnt_random = 0
@@ -122,8 +140,8 @@ for ii in range(1000):
             hit_cnt_random += 1
 
     roc_x.append(i)
-    roc_y.append(1.0 * hit_cnt / n)
-    roc_y_random.append(1.0 * hit_cnt_random / n)
+    roc_y.append(1.0 * hit_cnt / len(loss))
+    roc_y_random.append(1.0 * hit_cnt_random / len(loss))
 
 # draw Receiver-Operating Characteristic curve
 plt.title('Receiver-Operating Characteristic curve')

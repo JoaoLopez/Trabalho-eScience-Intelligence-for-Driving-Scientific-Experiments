@@ -41,9 +41,9 @@ When $J(\theta)'=0$:
 $$
 \theta = (X^TX)^{-1}X^TY
 $$
-ROC curve：
+ROC：
 
-![ROC](img/ROC.png)
+![ROC](img/ROC_matrix.png)
 
 ### Fitting with Gradient Descent
 
@@ -70,7 +70,8 @@ Repeat until convergence\{\\
 \}
 $$
 
-
 I got a bad curve. Maybe I haven't found the suitable $\alpha$ and the suitable iteration times.
+
+ROC:
 
 ![ROC](img/ROC_GD.png)
