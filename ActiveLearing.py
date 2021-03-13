@@ -133,8 +133,8 @@ for i in range(itera+1):
     near_r2.append(r2_score(test_label, near_y[i]))
 
 iteration = [1,2,3,4,5,6]
-plt.plot(iteration, far_mse[1:])
-plt.plot(iteration, near_mse[1:])
+plt.plot(iteration, far_mse[1:], label="Choose a further point")
+plt.plot(iteration, near_mse[1:], label="Choose a closer point")
 # plt.plot(iteration,r2[1:])
 plt.show()
 
