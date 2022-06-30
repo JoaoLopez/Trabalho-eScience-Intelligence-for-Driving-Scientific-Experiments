@@ -12,6 +12,8 @@ from sklearn.metrics import r2_score
 import random
 import copy
 
+#NÃO É DETERMINÍSTICA PORQUE LÊ UM ARQUIVO EXTERNO (pd.read_csv(file_path))
+#MAS A PARTE QUE VAI ATÉ A LINHA 72 PODE SER DETEMINÍSTICA
 def ActiveLearningDiffPredict(file_path):
     ## read data & choose data
     data = pd.read_csv(file_path)
@@ -109,11 +111,13 @@ def ActiveLearningDiffPredict(file_path):
         # y5[0].append(mo5.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
         y6[0].append(mo6.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
 
+##################ESSA PARTE PODERIA SER DETERMINÍSTICA
         # to record the Distance
         far = []
         for dis in features[i]:
             far.append(min(abs(dis - f1), abs(dis - f2)))
-        
+######################        
+
         for j in range(0, itera):
             # find the furthest point
             far_site = far.index(max(far)) 
@@ -131,9 +135,12 @@ def ActiveLearningDiffPredict(file_path):
             # y5[j+1].append(mo5.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
             y6[j+1].append(mo6.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
             # update the most cloest distance of every untrained point to all the points that have been trained
+
+##################ESSA PARTE PODERIA SER DETERMINÍSTICA
             for k in range(len(features[i])):
                 if k != far_site:
                     far[k] = min(far[k], abs(features[i][far_site]-features[i][k]))
+################################
 
         # put the two random points back
         features[i].append(f1)
@@ -147,6 +154,8 @@ def ActiveLearningDiffPredict(file_path):
     # mse3 = []
     # # mse4 = []
     # mse5 = []
+
+################ESSA PARTE POSSE SER DETERMINÍSTICA
     mse6 = []
     r2 = []
     for i in range(itera+1):
@@ -157,6 +166,7 @@ def ActiveLearningDiffPredict(file_path):
         # mse5.append(mean_squared_error(test_label, y5[i]))
         mse6.append(mean_squared_error(test_label, y6[i]))
         r2.append(r2_score(test_label, y6[i]))
+##############################
 
     ## draw
     iteration = list(range(1, itera+1))

@@ -71,6 +71,8 @@ size = 9
 
 ## get every feature matrix and label vector
 lr = LinearRegression()
+
+############ESSA PARTE PODE SER DETERMINÍSTICA
 features = []
 labels = []
 tmp_i = 0
@@ -91,6 +93,7 @@ for l in label_array:
         labels.append(mat_l)
         tmp_l = []
     tmp_i += 1
+###############################
 
 ## N-fold cross-validation
 # record the real value and the predictive value

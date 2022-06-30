@@ -19,6 +19,8 @@ import copy
 ## read data & choose data
 melbourne_file_path = 'Data/20343.csv'
 melbourne_data = pd.read_csv(melbourne_file_path)
+
+#########ESSA PARTE PODE SER DETERMINÍSTICA
 feature_array = melbourne_data["Small Mol Concentration (uM)"]
 label_array = melbourne_data["Increased Fraction Dead"]
 # the size of data in a same model
@@ -62,6 +64,7 @@ for i in range(itera+1):
     tmp=[]
     far_y.append(copy.deepcopy(tmp))
     near_y.append(copy.deepcopy(tmp))
+#########################################################################
 
 for i in range(len(features)):
 
@@ -93,35 +96,43 @@ for i in range(len(features)):
     far_y[0].append(far_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
     near_y[0].append(near_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
 
+##################ESSA PARTE PODE SER DETERMINÍSTICA
     far = []
     near = []
     for dis in features[i]:
         far.append(min(abs(dis - f1), abs(dis - f2)))
         near.append(min(abs(dis - f1), abs(dis - f2)))
-    
+###################################################
+
     for j in range(0, itera):
         far_site = far.index(max(far)) 
         far[far_site] = 0
         far_model.fit(np.array(features[i][far_site]).reshape(-1, 1), [labels[i][far_site]])
         far_y[j+1].append(far_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
+        
+##################ESSA PARTE PODE SER DETERMINÍSTICA
         for k in range(len(features[i])):
             if k != far_site:
                 far[k] = min(far[k], abs(features[i][far_site]-features[i][k]))
+################################################
 
         near_site = near.index(min(near)) 
         near[near_site] = 100
         near_model.fit(np.array(features[i][near_site]).reshape(-1, 1), [labels[i][near_site]])
         near_y[j+1].append(near_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
+        
+##################ESSA PARTE PODE SER DETERMINÍSTICA
         for k in range(len(features[i])):
             if (near[k] < 100) and (k != near_site):
                 near[k] = min(near[k], abs(features[i][near_site]-features[i][k]))
-
+#########################################
 
     features[i].append(f1)
     features[i].append(f2)
     labels[i].append(l1)
     labels[i].append(l2)
 
+########################ESSA PARTE PODE SER DETERMINÍSTICA
 far_mse = []
 near_mse = []
 far_r2 = []
@@ -131,6 +142,7 @@ for i in range(itera+1):
     near_mse.append(mean_squared_error(test_label, near_y[i]))
     far_r2.append(r2_score(test_label, far_y[i]))
     near_r2.append(r2_score(test_label, near_y[i]))
+#########################################
 
 iteration = [1,2,3,4,5,6]
 plt.plot(iteration, far_mse[1:], label="Choose a further point")

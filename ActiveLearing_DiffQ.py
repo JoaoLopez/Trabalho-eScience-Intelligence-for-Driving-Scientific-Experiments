@@ -12,9 +12,12 @@ from sklearn.metrics import r2_score
 import random
 import copy
 
+#NÃO É DETERMINÍSTICA PORQUE LÊ UM ARQUIVO EXTERNO(pd.read_csv(file_path))
 def ActiveLearningDiffQuery(file_path):
     ## read data & choose data
     data = pd.read_csv(file_path)
+
+###################ESSA PODERIA SER DETERMINÍSTICA
     feature_array = data["Small Mol Concentration (uM)"]
     label_array = data["Increased Fraction Dead"]
     # the size of data in a same model
@@ -62,6 +65,7 @@ def ActiveLearningDiffQuery(file_path):
         far_y.append(copy.deepcopy(tmp))
         near_y.append(copy.deepcopy(tmp))
         random_y.append(copy.deepcopy(tmp))
+################################################
 
 
     for i in range(len(features)):
@@ -92,6 +96,7 @@ def ActiveLearningDiffQuery(file_path):
         near_y[0].append(near_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
         random_y[0].append(random_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
 
+##########ESSA PARTE PODE SER DETERMINÍSTICA
         far = []
         near = []
         # storage the most cloest distance of every untrained point 
@@ -99,6 +104,7 @@ def ActiveLearningDiffQuery(file_path):
         for dis in features[i]:
             far.append(min(abs(dis - f1), abs(dis - f2)))
             near.append(min(abs(dis - f1), abs(dis - f2)))
+####################################################
 
         ran = list(range(0, itera))
         
@@ -113,9 +119,12 @@ def ActiveLearningDiffQuery(file_path):
             far_model.fit(np.array(features[i][far_site]).reshape(-1, 1), [labels[i][far_site]])
             far_y[j+1].append(far_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
             # update the most cloest distance of every untrained point to all the points that have been trained
+            
+###############################PODE SER DETERMINÍSTICA
             for k in range(len(features[i])):
                 if k != far_site:
                     far[k] = min(far[k], abs(features[i][far_site]-features[i][k]))
+#####################################
 
             # find the closest point
             near_site = near.index(min(near)) 
@@ -125,9 +134,12 @@ def ActiveLearningDiffQuery(file_path):
             near_model.fit(np.array(features[i][near_site]).reshape(-1, 1), [labels[i][near_site]])
             near_y[j+1].append(near_model.predict(np.array(test_feature[i]).reshape(-1, 1))[0])
             # update
+
+###############################PODE SER DETERMINÍSTICA
             for k in range(len(features[i])):
                 if (near[k] < 100) and (k != near_site):
                     near[k] = min(near[k], abs(features[i][near_site]-features[i][k]))
+#########################################
 
             # find a random point
             ran_site = random.choice(ran)
@@ -145,6 +157,7 @@ def ActiveLearningDiffQuery(file_path):
         labels[i].append(l1)
         labels[i].append(l2)
 
+##############ESSA PARTE PODE SER DETERMINÍSTICA
     ## caculate the mean square error
     far_mse = []
     near_mse = []
@@ -153,6 +166,7 @@ def ActiveLearningDiffQuery(file_path):
         far_mse.append(mean_squared_error(test_label, far_y[i]))
         near_mse.append(mean_squared_error(test_label, near_y[i]))
         random_mse.append(mean_squared_error(test_label, random_y[i]))
+###############################
 
     # draw
     iteration = list(range(1, itera+1))

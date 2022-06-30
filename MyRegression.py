@@ -59,6 +59,8 @@ class MyLinearRegression(object):
     def clear(self):
         self.parameter = []
 
+
+#NÃO É DETERMINÍSTICA PORQUE LÊ UM ARQUIVO EXTERNO(pd.read_csv(file_path))
 def MyRegerssion(file_path, type='matrix'): 
     ## read data & choose data
     data = pd.read_csv(file_path)
@@ -69,6 +71,8 @@ def MyRegerssion(file_path, type='matrix'):
 
     ## get every feature matrix and label vector
     lr = MyLinearRegression()
+
+    ###############ESSA PARTE É DETERMINÍSTICA
     features = []
     labels = []
     tmp_i = 0
@@ -89,6 +93,7 @@ def MyRegerssion(file_path, type='matrix'):
             labels.append(mat_l)
             tmp_l = []
         tmp_i += 1
+################################
 
     ## N-fold cross-validation
     # record the real value and the predictive value

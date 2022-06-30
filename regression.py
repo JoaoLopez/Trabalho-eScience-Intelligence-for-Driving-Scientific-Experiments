@@ -19,6 +19,8 @@ import random
 melbourne_file_path = 'Data/20343.csv'
 # melbourne_data = pd.read_csv(melbourne_file_path)
 melbourne_data = pd.read_csv(melbourne_file_path).loc[lambda x: x['Small Molecule Name'] == 'Abemaciclib'].loc[lambda x: x['Cell Name'] == 'HCC1806']
+
+############ESSA PARTE PODE SER DETERMINÍSTICA
 feature_array = melbourne_data["Small Mol Concentration (uM)"]
 label_array = melbourne_data["Increased Fraction Dead"]
 
@@ -30,6 +32,7 @@ for l in label_array:
     labels.append(l)
 features = np.array(features).reshape(-1, 1)
 labels = np.array(labels)
+#####################################################
 
 # model1 = DecisionTreeRegressor(max_depth=3)
 # model2 = neighbors.KNeighborsRegressor()
